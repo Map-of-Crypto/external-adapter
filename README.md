@@ -157,5 +157,5 @@ If using a REST API Gateway, you will need to disable the Lambda proxy integrati
   - VALUE: Your_API_key
 
 ## GCLOUD FUNCTION 
- - https://us-central1-project-chainlink.cloudfunctions.net/function-1
+ - https://us-central1-project-chainlink.cloudfunctions.net/needFunding
 # external-adapter
