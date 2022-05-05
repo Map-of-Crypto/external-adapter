@@ -35,29 +35,29 @@ const createRequest = async (input, callback) => {
 
   const options = {
     chain: "kovan",
-    address: "0xcb2E631887B15B815AD02aE88Dc0326374f37b16",
-    function_name: "returnRequestedPurchaseList",
+    address: "0xA2972925C438417C1b115e8EcfC18fE5BB2eE731",
+    function_name: "getPurchaseList",
     abi: ABI,
     // params: { who: "0x3355d6E71585d4e619f4dB4C7c5Bfe549b278299" },
   };
 
-  const pendingRequests = await Moralis.Web3API.native.runContractFunction(options);
+  const purchases = await Moralis.Web3API.native.runContractFunction(options);
 
   const validator = new Validator(callback, input)
   const jobRunID = validator.validated.id
 
 
 
-  let pendingFundingList = [];
-  for (let i = 0; i < pendingRequests.length; i++) {
-    // confirmed but not paid 
-    if (!pendingRequests[i][0] && pendingRequests[i][2]) {
-      let pendingFunding = {
-        paid: pendingRequests[i][0],
-        id: pendingRequests[i][1],
-        confirmed: pendingRequests[i][2]
+  let pendingPurchaseList = [];
+  for (let i = 0; i < purchases.length; i++) {
+    // accepted purchases
+    if (purchases[i][3]) {
+      let pendingPurchase = {
+        purchaseId: purchases[i][0],
+        trackingNumber: purchases[i][7]
+
       }
-      pendingFundingList.push(pendingFunding);
+      pendingPurchaseList.push(pendingPurchase);
     }
   }
 
@@ -90,16 +90,16 @@ const createRequest = async (input, callback) => {
 
       const trackingFiltered = trackingApiResponse.filter(tracking => tracking["status"] = "Delivered");
 
-      let productIdFunding = [];
-      for (let i = 0; i < pendingFundingList.length; i++) {
-        let id = pendingFundingList[i]["id"];
-        const find = trackingFiltered.find(element => element.productId === id)
+      let payablePurchases = [];
+      for (let i = 0; i < pendingPurchaseList.length; i++) {
+        let trackingNumber = pendingPurchaseList[i]["trackingNumber"];
+        const find = trackingFiltered.find(element => element.trackingId === trackingNumber)
         if (find) {
-          productIdFunding.push(find.productId);
+          payablePurchases.push(pendingPurchaseList[i]["purchaseId"]);
         }
       }
 
-      response.data = productIdFunding;
+      response.data = payablePurchases;
 
       callback(response.status, Requester.success(jobRunID, response))
     })
