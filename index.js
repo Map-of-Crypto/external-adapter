@@ -34,14 +34,15 @@ const createRequest = async (input, callback) => {
   const ABI = MapOfCrypto.abi;
 
   const options = {
-    chain: "kovan",
-    address: "0xA2972925C438417C1b115e8EcfC18fE5BB2eE731",
+    chain: "mumbai",
+    address: "0x6ed0039582D833756A87B347A978ECC6652ff028",
     function_name: "getPurchaseList",
     abi: ABI,
     // params: { who: "0x3355d6E71585d4e619f4dB4C7c5Bfe549b278299" },
   };
 
   const purchases = await Moralis.Web3API.native.runContractFunction(options);
+
 
   const validator = new Validator(callback, input)
   const jobRunID = validator.validated.id
